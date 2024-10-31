@@ -9,9 +9,7 @@ struct BattleDetail: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                // Battle image with an overlay gradient for depth
-                BattleImage(battle: battle)
-                
+                Spacer(minLength: 75);
                 // Battle name/title
                 Text(battle.name)
                     .font(.largeTitle)
@@ -29,6 +27,9 @@ struct BattleDetail: View {
                     .foregroundColor(.white.opacity(0.85))
                     .multilineTextAlignment(.center)
                     .padding(.top, 10)
+                
+                // Battle image with an overlay gradient for depth
+                BattleImage(battle: battle)
                 
                 Spacer() // Pushes content to the top
             }
