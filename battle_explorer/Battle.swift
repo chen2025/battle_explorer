@@ -2,24 +2,28 @@ import Foundation
 import SwiftUI
 import MapKit
 
+/// Represents a single historical battle, including metadata such as its name, front, description, image, and location
 struct Battle: Decodable, Identifiable {
-    let id: Int
-    let name: String
-    let front: String
-    let about: String
-    let imageName: String
-    let latitude: Double
-    let longitude: Double
+    let id: Int                // Unique identifier for the battle
+    let name: String           // Name of the battle
+    let front: String          // Front or theater of the battle (e.g., "Europe", "Pacific")
+    let about: String          // Detailed description of the battle
+    let imageName: String      // Name of the image file associated with this battle
+    let latitude: Double       // Latitude of the battle location
+    let longitude: Double      // Longitude of the battle location
     
+    /// Computed property to return the battle image
     var image: Image {
-        Image(imageName)
+        Image(imageName)       // SwiftUI Image created using imageName
     }
     
+    /// Computed property to return the geographical location of the battle as a CLLocationCoordinate2D
     var location: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
 }
 
+/// Observable class containing all battles, with functionality for filtering battles by front (e.g., "Europe", "Pacific")
 @Observable class AllBattles {
     var battles: [Battle] = []
     
@@ -136,12 +140,13 @@ struct Battle: Decodable, Identifiable {
         ]
     }
     
+    /// Filters battles by their front (e.g., Europe or Pacific). Returns all battles if the front filter is empty
     func filter(by front: String) -> [Battle] {
         if !front.isEmpty {
-            return battles.filter{battle in
+            return battles.filter { battle in
                 battle.front == front
             }
         }
-        return battles
+        return battles // Returns all battles if no filter is applied
     }
 }

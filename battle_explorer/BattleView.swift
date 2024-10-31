@@ -1,69 +1,114 @@
 import SwiftUI
 import MapKit
 
+/// Detailed view for displaying information about a specific battle, including an image, name, map, and description
 struct BattleDetail: View {
     let battle: Battle
-     @State var position: MapCameraPosition
+    @State var position: MapCameraPosition // Holds the map's camera position
     
     var body: some View {
-        GeometryReader { geo in
-            ScrollView {
-                battle.image
-                    .resizable()
-                    .scaledToFit()
-                    .overlay {
-                        LinearGradient(
-                            stops: [
-                                Gradient.Stop(color: .clear, location: 0.8),
-                                Gradient.Stop(color: .black, location: 1)
-                            ],
-                            startPoint: .top, endPoint: .bottom
-                        )
-                    }
+        ScrollView {
+            VStack(spacing: 20) {
+                // Battle image with an overlay gradient for depth
+                BattleImage(battle: battle)
                 
-                VStack(alignment: .leading) {
-                    Text(battle.name)
-                        .font(.largeTitle)
-                    
-                     Map(position: $position){
-                         Annotation(battle.name, coordinate: battle.location){
-                             Image(systemName: "mappin.and.ellipse")
-                                 .font(.largeTitle)
-                                 .imageScale(.large)
-                                 .symbolEffect(.pulse)
-                         }
-                     }
-                     .frame(height: 300)
-                     .overlay(alignment: .trailing) {
-                         Image(systemName: "greaterthan")
-                             .imageScale(.large)
-                             .font(.title3)
-                             .padding(.trailing, 5)
-                     }
-                     .overlay(alignment: .topLeading) {
-                         Text("Current Location")
-                             .padding([.leading, .bottom], 5)
-                             .padding(.trailing,8)
-                             .background(.black.opacity(0.33))
-                             .clipShape(.rect(bottomTrailingRadius: 15))
-                     }
-                     .clipShape(.rect(cornerRadius: 15))
-
-                    Text(battle.about)
-                        .font(.title3)
-                        .padding(.top, 20)
-                }
-                .padding()
-                .padding(.bottom, 20)
-                .frame(width: geo.size.width, alignment: .leading)
+                // Battle name/title
+                Text(battle.name)
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                    .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 2) // Subtle shadow for readability
+                    .multilineTextAlignment(.center)
+                
+                // Map showing battle location
+                BattleMap(battle: battle, position: $position)
+                
+                // Battle description text
+                Text(battle.about)
+                    .font(.body)
+                    .foregroundColor(.white.opacity(0.85))
+                    .multilineTextAlignment(.center)
+                    .padding(.top, 10)
+                
+                Spacer() // Pushes content to the top
             }
-            .ignoresSafeArea()
-            .toolbarBackground(.automatic)
+            .padding()
+            .frame(maxWidth: .infinity) // Center content and prevent overflow
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(Color("BackgroundEnd").opacity(0.2)) // Semi-transparent background
+                    .shadow(color: .black.opacity(0.15), radius: 5, x: 0, y: 2) // Light shadow for depth
+            )
+            .padding(.horizontal)
         }
+        .background(
+            LinearGradient(
+                colors: [Color("BackgroundStart"), Color("BackgroundEnd")],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        )
+        .ignoresSafeArea(edges: .top) // Extends background gradient to the top edge
+        .preferredColorScheme(.dark) // Dark mode as the preferred color scheme
     }
 }
 
+// MARK: - Subviews
+
+/// Subview for displaying the battle image with a gradient overlay for enhanced readability
+struct BattleImage: View {
+    let battle: Battle
+    
+    var body: some View {
+        battle.image
+            .resizable()
+            .scaledToFit()
+            .frame(maxWidth: .infinity) // Center image without stretching
+            .overlay(
+                LinearGradient(
+                    colors: [.clear, .black.opacity(0.7)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                ) // Gradient overlay from clear to black for depth
+            )
+    }
+}
+
+/// Subview for displaying a map with an annotation marking the battle location
+struct BattleMap: View {
+    let battle: Battle
+    @Binding var position: MapCameraPosition // Binds map camera position
+    
+    var body: some View {
+        Map(position: $position) {
+            // Annotation to mark the battle location on the map
+            Annotation(battle.name, coordinate: battle.location) {
+                Image(systemName: "mappin.and.ellipse")
+                    .font(.title)
+                    .foregroundColor(.red)
+                    .background(Circle().fill(Color.white).frame(width: 40, height: 40)) // White background for visibility
+                    .shadow(color: .black.opacity(0.3), radius: 3, x: 0, y: 2) // Shadow for depth
+            }
+        }
+        .frame(height: 300) // Fixed height for the map
+        .cornerRadius(15) // Rounded corners for a smoother look
+        .overlay(
+            // Label overlay in the top-left corner for additional context
+            Text("Current Location")
+                .font(.headline)
+                .padding(10)
+                .background(Color.black.opacity(0.5)) // Semi-transparent background
+                .foregroundColor(.white)
+                .cornerRadius(8)
+                .padding([.top, .leading], 10) // Positions label in top-left corner
+        )
+    }
+}
+
+// MARK: - Preview
+
 #Preview {
+    // Sample data for previewing the BattleDetail view
     let battle = Battle(
         id: 1,
         name: "Battle of Midway",
@@ -74,7 +119,9 @@ struct BattleDetail: View {
         longitude: -177.375734
     )
 
-    BattleDetail(battle: battle,
-     position: .camera(MapCamera(centerCoordinate: battle.location, distance: 300000))
-    ).preferredColorScheme(.dark)
+    // Preview with a sample battle and map position
+    BattleDetail(
+        battle: battle,
+        position: .camera(MapCamera(centerCoordinate: battle.location, distance: 300000))
+    )
 }
