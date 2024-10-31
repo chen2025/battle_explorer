@@ -93,14 +93,19 @@ struct BattleMap: View {
         .frame(height: 300) // Fixed height for the map
         .cornerRadius(15) // Rounded corners for a smoother look
         .overlay(
-            // Label overlay in the top-left corner for additional context
-            Text("Current Location")
-                .font(.headline)
-                .padding(10)
-                .background(Color.black.opacity(0.5)) // Semi-transparent background
-                .foregroundColor(.white)
-                .cornerRadius(8)
-                .padding([.top, .leading], 10) // Positions label in top-left corner
+            VStack {
+                HStack {
+                    Text("Current Location")
+                        .font(.headline)
+                        .padding(10)
+                        .background(Color.black.opacity(0.5)) // Semi-transparent background
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                    Spacer()
+                }
+                Spacer()
+            }
+            .padding([.top, .leading], 10) // Positions label in top-left corner
         )
     }
 }
