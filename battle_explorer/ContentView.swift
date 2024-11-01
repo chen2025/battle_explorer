@@ -1,7 +1,18 @@
 import SwiftUI
 import MapKit
 
-/// Main view for displaying a list of battles with detailed navigation to each battle's information
+/// `battle_explorer` provides an interactive interface for exploring World War II battles.
+///
+/// This view allows users to browse a list of battles, filtered by geographical fronts (e.g., Europe, Pacific).
+/// Users can select a front filter from a toolbar menu, and the list dynamically updates to display relevant battles.
+/// Selecting a battle navigates to a detail view with further information and a map centered on the battle's location.
+/// Each battle is displayed with its name, front, description, and an image.
+///
+/// How to Use:
+/// - Tap on the menu icon in the toolbar to select a filter (All, Europe, or Pacific).
+/// - Scroll through the filtered list of battles.
+/// - Tap on a battle to navigate to a detailed view, where a map view shows the battle location, and text displays a brief description.
+/// 
 struct ContentView: View {
     // Access the shared environment object for all battles
     @Environment(AllBattles.self) private var battles
